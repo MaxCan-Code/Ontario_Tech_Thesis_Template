@@ -1,0 +1,49 @@
+\documentclass[12pt, letter]{UOIT_Thesis}
+
+\usepackage{lipsum}
+
+\title{Your Thesis Title}
+\date{\today}
+\author{Your Name}
+
+\begin{document}
+\pagenumbering{roman} 
+\maketitle
+
+\makeabstract{
+Put your abstract here.
+}
+
+\makeacknowledgements{
+Thank some people that you like here.
+}
+
+\makedeclaration
+
+\maketableofcontents
+
+\pagenumbering{arabic}
+\doublespacing
+
+\chapter{First Chapter Title}
+\lipsum[1-2]
+\section{First Section}
+\lipsum[3-4]
+
+\chapter{Second Chapter Title}
+\lipsum[5-6]
+\begin{figure}[tbp]
+\includegraphics{Plot}
+\caption{Beautiful plot of $y = \sin(\pi x)$.}
+\end{figure}
+\lipsum[7-8]
+
+\nocite{*}
+\bibliography{Ref}
+
+\appendix
+
+\chapter{Sample Appendix}
+\lipsum[9-12]
+
+\end{document}
