@@ -8,12 +8,23 @@
 \NeedsTeXFormat{LaTeX2e}
 \ProvidesClass{UOIT_Thesis}[2018/12/15 Brady Metherall's UOIT Thesis Template]
 
+% Modify these to the correct program
+\def\@degree{Master of Science}
+\def\@faculty{Science}
+\def\@program{Modelling and Computational Science}
+
+% Optional arguments from the document
 \DeclareOption{BW}{\def\@bw{}}
-\DeclareOption*{%
-  \PassOptionsToClass{\CurrentOption}{report}%
+\DeclareOption{nocoat}{\def\@nocoat{}}
+\DeclareOption{oneside}{
+  \def\@oneside{}
+  \PassOptionsToClass{\CurrentOption}{book}
+}
+\DeclareOption*{
+  \PassOptionsToClass{\CurrentOption}{book}%
 }
 \ProcessOptions\relax
-\LoadClass{report}
+\LoadClass[12pt, letter]{book}
 
 % Math
 \RequirePackage{amsmath}
@@ -22,24 +33,32 @@
 \RequirePackage{graphicx}
 \RequirePackage[dvipsnames]{xcolor}
 % Margins and spacing
-\RequirePackage[top=1in, bottom=1in, left=1.5in, right=1in]{geometry}
+\RequirePackage{geometry}
 \RequirePackage{setspace}
 % Formatting
 \RequirePackage{fancyhdr}
 \RequirePackage{titlesec}
 \RequirePackage{datetime}
 \RequirePackage{anyfontsize}
+\RequirePackage{emptypage}
 % Other
 \RequirePackage{hyperref}
 \RequirePackage{subcaption}
 
-% Define macros
+% Define some things
 \newdateformat{monthyeardate}{\monthname[\THEMONTH] \THEYEAR}
-\newcommand\chapnumsize{\fontsize{60}{25}\selectfont}
+\newcommand\chapnumsize{\fontsize{75}{0}\selectfont}
 \ifdefined\@bw
   \definecolor{uoitblue}{RGB}{0,0,0}
 \else
   \definecolor{uoitblue}{RGB}{0,60,113}
+\fi
+
+% Define margins
+\ifdefined\@oneside
+  \geometry{top=1in, bottom=1in, left=1.5in, right=1in}
+\else
+  \geometry{top=1in, bottom=1in, outer=1.5in, inner=1in}
 \fi
 
 % Define bibliography style
@@ -49,66 +68,72 @@
 % Define headers / footers
 \pagestyle{fancy}
 \renewcommand{\chaptermark}[1]{\markboth{\chaptername \ \thechapter: #1}{}}
-\lhead{\small \nouppercase{\leftmark}}
-\chead{}
-\rhead{\small \thepage}
-\lfoot{}
-\rfoot{}
-\cfoot{}
+\renewcommand{\sectionmark}[1]{\markright{Section \thesection: #1}{}}
+\fancyhead[RO, LE]{\small \thepage} % Outside of page
+\fancyhead[RE]{\small \nouppercase{\leftmark}} % Inside of left page
+\ifdefined\@oneside
+  \fancyhead[LO]{\small \nouppercase{\leftmark}} % Inside of right page
+\else
+  \fancyhead[LO]{\small \nouppercase{\rightmark}} % Inside of right page
+\fi
 
 % Chapter header style
 \titleformat{\chapter}[display]
 {\normalfont\bfseries}
 {\color{uoitblue}\small\chaptername \ \chapnumsize\thechapter\filleft}
-{10ex}
+{5mm}
 {\titlerule[0.5pt]
-\vspace{2ex}%
+\vspace{2mm}%
 \color{uoitblue}\LARGE\filcenter}
-[\vspace{1ex}%
-{\color{black}\titlerule[2pt]}]
+[\vspace{2mm}%
+{\color{black}
+\titlerule[2pt]}]
 
 % Title page style
 \renewcommand{\maketitle}
 {
-\newgeometry{top=1in, bottom=1in, left=2.5in, right=2in}
+%\newgeometry{top=1in, bottom=1in, left=2.5in, right=2in}
 \begin{titlepage}
 \begin{center}
 {
 \color{uoitblue}\Huge \textbf{\@title}\\
-\vspace{8mm}
+\vspace{5mm}
 \color{black}
 \normalsize by \\
-\vspace{2mm}
+\vspace{5mm}
 \Large \@author \\
 \vspace{25mm}
 
 \normalsize
-
 A Thesis Submitted in Partial Fulfillment \\
 of the Requirements for the Degree of \\
-Master of Science \\
+\@degree \\
 in \\
-The Faculty of Science \\
-Modelling and Computational Science \\
-\vspace{5mm}
-University of Ontario Institute of Technology \\
-\vspace{5mm}
-\monthyeardate\today
+The Faculty of \@faculty \\
+\@program \\
 \vspace{10mm}
+University of Ontario Institute of Technology \\
+\vspace{10mm}
+\monthyeardate\today
 
-\ifdefined\@bw
-  \includegraphics[scale=0.5]{Coat_of_Arms_BW}
+\ifdefined\@nocoat
 \else
-  \includegraphics[scale=0.5]{Coat_of_Arms}
+  \ifdefined\@bw
+    \vfill
+    \includegraphics[scale=0.6]{Coat_of_Arms_BW}
+  \else
+    \vfill
+    \includegraphics[scale=0.6]{Coat_of_Arms}
+  \fi
 \fi
 
-\vspace{10mm}
+\vfill
 
 \textcopyright \ \@author \ \the\year
 }
 \end{center}
 \end{titlepage}
-\restoregeometry
+%\restoregeometry
 \setcounter{page}{2}
 }
 
@@ -151,7 +176,7 @@ University of Ontario Institute of Technology \\
 \begin{center} \bf{\Large{Author's Declaration}} \end{center}
 \vspace{20pt}
 
-\noindent I declare that the work in this thesis was carried out in accordance with the regulations of the University of Ontario Institute of Technology. The work is original except where indicated by special reference in the text and no part of the dissertation has been submitted for any other degree. Any views expressed in the dissertation are those of the author and in no way represent those of the University of Ontario Institute of Technology. The thesis has not been presented to any other university for examination either in Canada or elsewhere.
+\noindent I declare that the work in this thesis was carried out in accordance with the regulations of the University of Ontario Institute of Technology. The work is original except where indicated by special reference in the text and no part of the dissertation has been submitted for any other degree. Any views expressed in the dissertation are those of the author and in no way represent those of the University of Ontario Institute of Technology. This thesis has not been presented to any other university for examination either in Canada or elsewhere.
 
 \vspace{25mm}
 \begin{center}
