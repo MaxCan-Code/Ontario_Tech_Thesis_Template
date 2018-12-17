@@ -49,7 +49,7 @@
 % Define headers / footers
 \pagestyle{fancy}
 \renewcommand{\chaptermark}[1]{\markboth{\chaptername \ \thechapter: #1}{}}
-\lhead{\small \leftmark}
+\lhead{\small \nouppercase{\leftmark}}
 \chead{}
 \rhead{\small \thepage}
 \lfoot{}
@@ -183,5 +183,10 @@ University of Ontario Institute of Technology \\
 
 \clearpage
 }
+
+% Change chapter header to 'Appendix' for appendices
+\makeatletter
+\g@addto@macro{\appendix}{\renewcommand\chaptername{Appendix}}
+\makeatother
 
 \endinput

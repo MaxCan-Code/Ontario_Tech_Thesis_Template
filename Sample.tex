@@ -1,6 +1,6 @@
 \documentclass[12pt, letter]{UOIT_Thesis}
 
-\usepackage{lipsum}
+\usepackage{lipsum} % Only for the sample
 
 \title{Your Thesis Title}
 \date{\today}
@@ -38,7 +38,11 @@ Thank some people that you like here.
 \end{figure}
 \lipsum[7-8]
 
-\nocite{*}
+% Adds references to table of contents
+\phantomsection 
+\addcontentsline{toc}{chapter}{References} 
+
+\nocite{*} % Only for the sample
 \bibliography{Ref}
 
 \appendix
