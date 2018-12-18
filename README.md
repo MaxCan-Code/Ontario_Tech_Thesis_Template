@@ -4,7 +4,7 @@ This is the thesis template I modified from [Joe's undergradutate template](http
 ## How to use this template
 
 Copy the necessary files into the same directory as your thesis.
-The template is then loaded with `\documentclass{UOIT_Thesis}`
+The template is then loaded with `\documentclass{UOIT_Thesis}`.
 
 ## Optional Arguments
 
@@ -12,3 +12,5 @@ There are three main options that can be passed to the class (as well as other a
 - `oneside` (creates a one sided document instead of two)
 - `nocoat` (removes the coat of arms on the title page)
 - `BW` (uses a greyscale coat of arms and black for the chapter titles)
+
+Furthermore, if your university is not UOIT, within the `.tex` you can specify your institution by uncommenting the line `%\university{Your University}`.

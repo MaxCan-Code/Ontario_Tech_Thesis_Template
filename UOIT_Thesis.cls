@@ -9,9 +9,9 @@
 \ProvidesClass{UOIT_Thesis}[2018/12/15 Brady Metherall's UOIT Thesis Template]
 
 % Optional arguments from the document
-\DeclareOption{BW}{\def\@bw{}}
-\DeclareOption{nocoat}{\def\@nocoat{}}
-\DeclareOption{oneside}{
+\DeclareOption{BW}{\def\@bw{}} % Black and white
+\DeclareOption{nocoat}{\def\@nocoat{}} % No coat of arms
+\DeclareOption{oneside}{ % One sided document
   \def\@oneside{}
   \PassOptionsToClass{\CurrentOption}{book}
 }
@@ -41,21 +41,30 @@
 \RequirePackage{subcaption}
 
 % Define some things
-\newdateformat{monthyeardate}{\monthname[\THEMONTH] \THEYEAR}
-\newcommand\chapnumsize{\fontsize{75}{0}\selectfont}
+\newdateformat{monthyeardate}{\monthname[\THEMONTH] \THEYEAR} % New date format
+\newcommand\chapnumsize{\fontsize{75}{0}\selectfont} % Chapter number font size
 \ifdefined\@bw
   \definecolor{uoitblue}{RGB}{0,0,0}
 \else
-  \definecolor{uoitblue}{RGB}{0,60,113}
+  \definecolor{uoitblue}{RGB}{0,60,113} % Colour of chapter titles (UOIT's dark blue)
 \fi
 
+% Get info from main tex document
 \newcommand*{\degree}[1]{\def\@degree{#1}}
 \newcommand*{\faculty}[1]{\def\@faculty{#1}}
 \newcommand*{\program}[1]{\def\@program{#1}}
 \newcommand*{\university}[1]{\def\@university{#1}}
+\university{University of Ontario Institute of Technology} % Default university if none given
 
-% Default university
-\university{University of Ontario Institute of Technology}
+% PDF metadata
+\AtBeginDocument{
+  \hypersetup{
+    linktoc=all,
+    pdftitle=\@title,
+    pdfauthor=\@author,
+    pdfsubject=\@degree---\@university
+  }
+}
 
 % Define margins
 \ifdefined\@oneside
@@ -95,7 +104,6 @@
 % Title page style
 \renewcommand{\maketitle}
 {
-%\newgeometry{top=1in, bottom=1in, left=2.5in, right=2in}
 \begin{titlepage}
 \begin{center}
 {
@@ -136,13 +144,11 @@ The Faculty of \@faculty \\
 }
 \end{center}
 \end{titlepage}
-%\restoregeometry
 \setcounter{page}{2}
 }
 
 % Abstract
-\newcommand{\makeabstract}[1]
-{
+\newcommand{\makeabstract}[1]{
 \clearpage
 \phantomsection
 \thispagestyle{plain}
@@ -155,8 +161,7 @@ The Faculty of \@faculty \\
 }
 
 % Acknowledgements / dedication
-\newcommand{\makeacknowledgements}[1]
-{
+\newcommand{\makeacknowledgements}[1]{
 \clearpage
 \phantomsection
 \thispagestyle{plain}
@@ -169,8 +174,7 @@ The Faculty of \@faculty \\
 }
 
 % Declaration
-\newcommand{\makedeclaration}
-{
+\newcommand{\makedeclaration}{
 \clearpage
 \phantomsection
 \thispagestyle{plain}
@@ -191,8 +195,7 @@ The Faculty of \@faculty \\
 }
 
 % Table of Contents
-\newcommand{\maketableofcontents}
-{
+\newcommand{\maketableofcontents}{
 \clearpage
 \phantomsection
 
