@@ -1,10 +1,21 @@
-\documentclass[oneside]{UOIT_Thesis}
+\documentclass[oneside, nocoat]{UOIT_Thesis}
 
 \usepackage{lipsum} % Only for the sample
 
 \title{Your Thesis Title}
 \date{\today}
 \author{Your Name}
+\degree{Your Degree}
+\faculty{Your Faculty}
+\program{Your Program}
+
+\makeatletter
+\hypersetup{
+  linktoc=all,
+  pdftitle=\@title,
+  pdfauthor=\@author,
+  pdfsubject=\@degree---\@university}
+\makeatother
 
 \begin{document}
 \pagenumbering{roman} 

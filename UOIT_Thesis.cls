@@ -8,11 +8,6 @@
 \NeedsTeXFormat{LaTeX2e}
 \ProvidesClass{UOIT_Thesis}[2018/12/15 Brady Metherall's UOIT Thesis Template]
 
-% Modify these to the correct program
-\def\@degree{Master of Science}
-\def\@faculty{Science}
-\def\@program{Modelling and Computational Science}
-
 % Optional arguments from the document
 \DeclareOption{BW}{\def\@bw{}}
 \DeclareOption{nocoat}{\def\@nocoat{}}
@@ -53,6 +48,14 @@
 \else
   \definecolor{uoitblue}{RGB}{0,60,113}
 \fi
+
+\newcommand*{\degree}[1]{\def\@degree{#1}}
+\newcommand*{\faculty}[1]{\def\@faculty{#1}}
+\newcommand*{\program}[1]{\def\@program{#1}}
+\newcommand*{\university}[1]{\def\@university{#1}}
+
+% Default university
+\university{University of Ontario Institute of Technology}
 
 % Define margins
 \ifdefined\@oneside
@@ -97,12 +100,12 @@
 \begin{center}
 {
 \color{uoitblue}\Huge \textbf{\@title}\\
-\vspace{5mm}
+\vfill
 \color{black}
 \normalsize by \\
-\vspace{5mm}
+\vfill
 \Large \@author \\
-\vspace{25mm}
+\vfill \vfill
 
 \normalsize
 A Thesis Submitted in Partial Fulfillment \\
@@ -111,23 +114,23 @@ of the Requirements for the Degree of \\
 in \\
 The Faculty of \@faculty \\
 \@program \\
-\vspace{10mm}
-University of Ontario Institute of Technology \\
-\vspace{10mm}
+\vfill \vfill
+\@university \\
+\vfill \vfill
 \monthyeardate\today
 
 \ifdefined\@nocoat
 \else
   \ifdefined\@bw
-    \vfill
+    \vfill \vfill
     \includegraphics[scale=0.6]{Coat_of_Arms_BW}
   \else
-    \vfill
+    \vfill \vfill
     \includegraphics[scale=0.6]{Coat_of_Arms}
   \fi
 \fi
 
-\vfill
+\vfill \vfill
 
 \textcopyright \ \@author \ \the\year
 }
@@ -176,7 +179,7 @@ University of Ontario Institute of Technology \\
 \begin{center} \bf{\Large{Author's Declaration}} \end{center}
 \vspace{20pt}
 
-\noindent I declare that the work in this thesis was carried out in accordance with the regulations of the University of Ontario Institute of Technology. The work is original except where indicated by special reference in the text and no part of the dissertation has been submitted for any other degree. Any views expressed in the dissertation are those of the author and in no way represent those of the University of Ontario Institute of Technology. This thesis has not been presented to any other university for examination either in Canada or elsewhere.
+\noindent I declare that the work in this thesis was carried out in accordance with the regulations of the \@university. The work is original except where indicated by special reference in the text and no part of the dissertation has been submitted for any other degree. Any views expressed in the dissertation are those of the author and in no way represent those of the \@university. This thesis has not been presented to any other university for examination either in Canada or elsewhere.
 
 \vspace{25mm}
 \begin{center}
