@@ -37,8 +37,9 @@
 \RequirePackage{anyfontsize}
 \RequirePackage{emptypage}
 % Other
-\RequirePackage{hyperref}
+\RequirePackage[colorlinks=true, linkcolor=uoitblue]{hyperref}
 \RequirePackage{subcaption}
+\RequirePackage{cite}
 
 % Define some things
 \newdateformat{monthyeardate}{\monthname[\THEMONTH] \THEYEAR} % New date format
@@ -59,7 +60,6 @@
 % PDF metadata
 \AtBeginDocument{
   \hypersetup{
-    linktoc=all,
     pdftitle=\@title,
     pdfauthor=\@author,
     pdfsubject=\@degree---\@university
@@ -88,6 +88,7 @@
 \else
   \fancyhead[LO]{\small \nouppercase{\rightmark}} % Inside of right page
 \fi
+\fancyfoot{}
 
 % Chapter header style
 \titleformat{\chapter}[display]
