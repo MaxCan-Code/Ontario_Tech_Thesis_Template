@@ -1,12 +1,39 @@
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%															%
-%		Modified from Jospeh MacMillan's undergraduate template:	%
-%		http://faculty.uoit.ca/macmillan/thesis_template.zip			%
-%															%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%  
+%%  UOIT_Thesis.cls (v1.0)
+%%
+%%  This program can be redistributed and/or modified under the terms
+%%  of the LaTeX Project Public License Distributed from CTAN archives
+%%  in directory CTAN:/macros/latex/base/lppl.txt.
+%%
+%%  Copyright (c) 2018 by Brady Metherall
+%%  Last Update: 2018 December 20
+%%  
+%%  
+%%  This file is distributed in the hope that it will be useful but
+%%  without any warranty.
+%%  
+%%  Feel free to copy and redistribute this file, as long as this
+%%  copyright notice remains intact. You may also modify the file
+%%  to suit your particular needs, as long as you indicate your
+%%  changes below.
+%%  
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%  REVISION HISTORY:
+%% 
+%%  v1.0: 2018/12/20 (Brady Metherall)
+%%      - Repurposed jthesis.cls file for UOIT graduate theses.
+%%
+%%
+%%  v1.0: 2014/08/20 (Joseph MacMillan)
+%%      - Initial version
+%%      - http://faculty.uoit.ca/macmillan/thesis_template.zip
+%%  
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{UOIT_Thesis}[2018/12/15 Brady Metherall's UOIT Thesis Template]
+\ProvidesClass{UOIT_Thesis}[2018/12/20 Brady Metherall's UOIT Thesis Template]
 
 % Optional arguments from the document
 \DeclareOption{BW}{\def\@bw{}} % Black and white
