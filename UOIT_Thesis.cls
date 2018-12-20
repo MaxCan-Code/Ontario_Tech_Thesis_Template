@@ -132,10 +132,10 @@ The Faculty of \@faculty \\
 \else
   \ifdefined\@bw
     \vfill \vfill
-    \includegraphics[scale=0.6]{Coat_of_Arms_BW}
+    \includegraphics[scale=0.5]{Coat_of_Arms_BW}
   \else
     \vfill \vfill
-    \includegraphics[scale=0.6]{Coat_of_Arms}
+    \includegraphics[scale=0.5]{Coat_of_Arms}
   \fi
 \fi
 
