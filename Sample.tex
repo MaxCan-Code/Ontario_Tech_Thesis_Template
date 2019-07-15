@@ -2,6 +2,7 @@
 
 \usepackage{lipsum} % Only for the sample
 
+% Thesis properties
 \title{Your Thesis Title}
 \date{\today}
 \author{Your Name}
@@ -10,10 +11,21 @@
 \program{Your Program}
 % By default the university is UOIT, this can be changed by uncommenting the following 
 %\university{Your University}
+%\city{Your city and country}
+
+% Defense properties
+\defense{July 1, 2019}
+\chair{Thesis Chair}
+\supervisor{Your Supervisor}
+\committee{Committee Member 1}{Committee Member 2}
+\examiner{External Examiner, Their Affiliation} % Thesis / External Examiner
+%\univexaminer{} % University Examiner (PhD Only)
 
 \begin{document}
 \pagenumbering{roman} 
 \maketitle
+
+\makeexaminfo
 
 \makeabstract{
 Put your abstract here.
@@ -24,6 +36,10 @@ Thank some people that you like here.
 }
 
 \makedeclaration
+
+\makecontributions{
+The work described in Chapter \ref{chap:chap2} was performed at the Futuristic Automotive Research Centre of Excellence (FARCE) in Hill Valley, California, using the Flux Capacitor testing laboratory operated by Dr. Emmett Brown. I was responsible for installing and testing flux capacitors in my automotive prototype vehicles.
+}
 
 {\hypersetup{linkcolor=black}
 \maketableofcontents
@@ -38,6 +54,7 @@ Thank some people that you like here.
 \lipsum[3-4]
 
 \chapter{Second Chapter Title}
+\label{chap:chap2}
 \lipsum[5-6]
 \begin{figure}[tbp]
 \includegraphics{Plot}

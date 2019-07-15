@@ -22,6 +22,9 @@
 %%
 %%  REVISION HISTORY:
 %% 
+%%  v1.1: 2019/07/15 (Brady Metherall)
+%%      - Added Thesis Examination Information and Statement of Contributions
+%% 
 %%  v1.0: 2018/12/20 (Brady Metherall)
 %%      - Repurposed jthesis.cls file for UOIT graduate theses.
 %%
@@ -33,11 +36,12 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{UOIT_Thesis}[2018/12/20 Brady Metherall's UOIT Thesis Template]
+\ProvidesClass{UOIT_Thesis}[2019/07/15 Brady Metherall's UOIT Thesis Template]
 
 % Optional arguments from the document
 \DeclareOption{BW}{\def\@bw{}} % Black and white
 \DeclareOption{nocoat}{\def\@nocoat{}} % No coat of arms
+\DeclareOption{phd}{\def\@phd{}} % PhD
 \DeclareOption{oneside}{ % One sided document
   \def\@oneside{}
   \PassOptionsToClass{\CurrentOption}{book}
@@ -46,7 +50,7 @@
   \PassOptionsToClass{\CurrentOption}{book}%
 }
 \ProcessOptions\relax
-\LoadClass[12pt, letter]{book}
+\LoadClass[12pt, letterpaper]{book}
 
 % Math
 \RequirePackage{amsmath}
@@ -64,7 +68,7 @@
 \RequirePackage{anyfontsize}
 \RequirePackage{emptypage}
 % Other
-\RequirePackage[colorlinks=true, linkcolor=uoitblue]{hyperref}
+\RequirePackage[colorlinks=true, linkcolor=uoitblue, urlcolor = uoitblue]{hyperref}
 \RequirePackage{subcaption}
 \RequirePackage{cite}
 
@@ -81,8 +85,17 @@
 \newcommand*{\degree}[1]{\def\@degree{#1}}
 \newcommand*{\faculty}[1]{\def\@faculty{#1}}
 \newcommand*{\program}[1]{\def\@program{#1}}
+\newcommand*{\defense}[1]{\def\@defense{#1}}
 \newcommand*{\university}[1]{\def\@university{#1}}
+\newcommand*{\city}[1]{\def\@city{#1}}
 \university{University of Ontario Institute of Technology} % Default university if none given
+\city{Oshawa, Ontario, Canada} % Default city if none given
+
+\newcommand*{\chair}[1]{\def\@chair{#1}}
+\newcommand*{\supervisor}[1]{\def\@supervisor{#1}}
+\newcommand*{\examiner}[1]{\def\@examiner{#1}}
+\newcommand*{\univexaminer}[1]{\def\@univexaminer{#1}}
+\newcommand*{\committee}[2]{\def\@committeea{#1}\def\@committeeb{#2}}
 
 % PDF metadata
 \AtBeginDocument{
@@ -152,6 +165,7 @@ The Faculty of \@faculty \\
 \@program \\
 \vfill \vfill
 \@university \\
+\@city \\
 \vfill \vfill
 \monthyeardate\today
 
@@ -174,6 +188,43 @@ The Faculty of \@faculty \\
 \end{titlepage}
 \setcounter{page}{2}
 }
+
+% Thesis Examination Information
+\newcommand{\makeexaminfo}{
+\clearpage
+\phantomsection
+\thispagestyle{plain}
+\addcontentsline{toc}{chapter}{\numberline{}Thesis Examination Information}
+\vfill
+\begin{center}
+\textbf{\Large{Thesis Examination Information}} \\
+\vfill
+Submitted by: \@author \\
+\vfill
+\@degree \ in \@program \\
+\vfill
+\@title \\
+\end{center}
+\vfill \vfill
+An oral defense of this thesis took place on \@defense \ in front of the following examining committee: \\
+\vfill
+\noindent \textbf{Examining Committee:} \\
+\renewcommand{\arraystretch}{2}
+\begin{tabular}{@{} p{6cm} p{10cm}}
+Chair of Examining Committee & \@chair \\
+Research Supervisor & \@supervisor \\
+Examining Committee Member & \@committeea \\
+Examining Committee Member & \@committeeb \\
+\ifdefined\@phd University Examiner & \@univexaminer \\ \fi
+\ifdefined\@phd External \else Thesis \fi Examiner & \@examiner
+\end{tabular}
+\renewcommand{\arraystretch}{1}
+\vfill \vfill
+\noindent The above committee determined that the thesis is acceptable in form and content and that a satisfactory knowledge of the field covered by the thesis was demonstrated by the candidate during an oral examination. A signed copy of the Certificate of Approval is available from the School of Graduate and Postdoctoral Studies.
+\vfill \vfill \vfill \vfill \vfill \vfill
+\clearpage
+}
+
 
 % Abstract
 \newcommand{\makeabstract}[1]{
@@ -219,6 +270,19 @@ The Faculty of \@faculty \\
 \@author \\
 \@date
 \end{center}
+\clearpage
+}
+
+% Statement of Contributions
+\newcommand{\makecontributions}[1]{
+\clearpage
+\phantomsection
+\thispagestyle{plain}
+\addcontentsline{toc}{chapter}{\numberline{}Statement of Contributions}
+\vspace{5pt}
+\begin{center} \bf{\Large{Statement of Contributions}} \end{center}
+\vspace{20pt}
+#1
 \clearpage
 }
 
