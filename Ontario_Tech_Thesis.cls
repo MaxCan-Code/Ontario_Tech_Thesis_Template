@@ -22,6 +22,9 @@
 %%
 %%  REVISION HISTORY:
 %% 
+%%  v1.1: 2019/09/24 (Brady Metherall)
+%%      - Renamed to new branding
+%% 
 %%  v1.1: 2019/07/15 (Brady Metherall)
 %%      - Added Thesis Examination Information and Statement of Contributions
 %% 
@@ -36,7 +39,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{UOIT_Thesis}[2019/07/15 Brady Metherall's UOIT Thesis Template]
+\ProvidesClass{Ontario_Tech_Thesis}[2019/09/24 Brady Metherall's Ontario Tech Thesis Template]
 
 % Optional arguments from the document
 \DeclareOption{BW}{\def\@bw{}} % Black and white
@@ -224,7 +227,6 @@ Examining Committee Member & \@committeeb \\
 \vfill \vfill \vfill \vfill \vfill \vfill
 \clearpage
 }
-
 
 % Abstract
 \newcommand{\makeabstract}[1]{

@@ -1,10 +1,10 @@
-# UOIT Thesis Template
+# Ontario Tech Thesis Template
 This is the thesis template I modified from [Joe's undergradutate template](http://faculty.uoit.ca/macmillan/thesis_template.zip).
 
 ## How to use this template
 
 Copy the necessary files into the same directory as your thesis.
-The template is then loaded with `\documentclass{UOIT_Thesis}`.
+The template is then loaded with `\documentclass{Ontario_Tech_Thesis}`.
 
 ## Optional Arguments
 
