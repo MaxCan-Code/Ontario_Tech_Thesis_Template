@@ -1,12 +1,10 @@
 # from https://fenicsproject.org/olddocs/dolfin/latest/python/demos/singular-poisson
 from dolfin import *
-import matplotlib.pyplot as plt
-
 
 def singular_poisson(mesh, degree, κ, f, g, points):
     "Solve singular Poisson with point sources using supplied mesh and κ"
 
-    # Then, we check that dolfin is configured with the backend called	def singular_poisson():
+    # Then, we check that dolfin is configured with the backend called
     # PETSc, since it provides us with a wide range of methods used by
     # :py:class:`KrylovSolver <dolfin.cpp.la.KrylovSolver>`. We set PETSc as
     # our backend for linear algebra::
@@ -113,6 +111,7 @@ def gen_refned_mesh(n_cells, n_refns, R, src_size, obj_padded):
 
         charge_plane.mark(cell_markers, True)
         obj_padded.mark(cell_markers, True)
+        # CompiledSubDomain(charge_plane_mask).mark(cell_markers, True)
 
         # Refine mesh
         mesh = refine(mesh, cell_markers)
@@ -141,46 +140,101 @@ def mk_plane_source(size):
     return points
 
 
+def gen_obj(geom, a, d, boarder):
+    if geom == "sphere":
+        obj_mask = (
+            f"pow(x[0] / 3, 2) + "
+            f"pow(x[1], 2) + "
+            f"pow(x[2] - {d}, 2) "
+            f"<= {(a + boarder) ** 2}"
+        )
+    elif geom == "box":
+        obj_mask = (
+            f"abs(x[0]) <= {a + boarder} and "
+            f"abs(x[1]) <= {a + boarder} and "
+            f"abs(x[2] - {d}) <= {a + boarder}"
+        )
+
+    return CompiledSubDomain(obj_mask)
+
+
+def coeff(mesh, obj):
+
+    # Define subdomain markers
+    markers = MeshFunction('size_t', mesh, mesh.topology().dim(), 0)
+
+    # apply marker (bool mask)
+    obj.mark(markers, 1)
+
+    # Define magnetic permeability
+    class Permeability(UserExpression):
+        def __init__(self, markers, **kwargs):
+            super().__init__(**kwargs)
+            self.markers = markers
+
+        def eval_cell(self, values, x, cell):
+            # eps_e = 80.1, eps_i = 2.25,
+            if self.markers[cell.index] == 1:
+                values[0] = 2.25 / 80.1  # eps_i = 2.25
+            else:
+                values[0] = 1            # eps_e = 80.1
+
+    κ = Permeability(markers, degree=1)
+
+    return κ
+
+
+def test_pert(obj_geom, n_cells, n_refns, R, points):
 def test_singular_poisson():
     "test and plot"
 
     # source :math:`f` and boundary normal derivative :math:`g`	
-    f = Expression("10*exp(-(pow(x[0] - 0.5, 2) + pow(x[1] - 0.5, 2)) / 0.02)", degree=2)	
-    g = Expression("-sin(5*x[0])", degree=2)	
-    # f = Constant(0)
-    # g = Constant(0)
-
-    plane_size = (4, 10)
+    f = Constant(0)
+    g = Constant(0)
 
     """
     object radius a = 2.0 cm
     d = 7 cm
     """
     a, d = 2, 7
-    boarder = 2
-    sphere_padded = CompiledSubDomain(
-        f"pow(x[0], 2) + "
-        f"pow(x[1], 2) + "
-        f"pow(x[2] - {d}, 2) "
-        f"<= { (a + boarder) ** 2 }"
-    )
 
-    refned_mesh = gen_refned_mesh(20, 2, 20, plane_size, sphere_padded)
+    sphere_padded = gen_obj("box", a, d, boarder=2)
+    sphere_ = gen_obj("box", a, d, boarder=0)
 
-    points = mk_plane_source(plane_size)
+    plane_size = (4, 10)
+    refned_mesh = gen_refned_mesh(30, 2, 50, plane_size, sphere_padded)
 
-    u = singular_poisson(refned_mesh, 1, Constant(1), f, g, points)
+    κ_obj = coeff(refned_mesh, sphere_)
 
-    # u_obj = singular_poisson(refned_mesh, 1, κ_obj, f, g, points)
+    u_obj = singular_poisson(refned_mesh, 1, κ_obj, f, g, points)
 
-    # u_empty = singular_poisson(refned_mesh, 1, Constant(1), f, g, points)
+    u_empty = singular_poisson(refned_mesh, 1, Constant(1), f, g, points)
+    
+    return u_obj, u_empty
 
+
+def plot_and_save(u_obj, u_empty):
     # and plot the solution ::
+    "plot and save the solution"
 
-    p_ = plot(u)
-    # p_ = plot(u, mode="warp")
-    plt.colorbar(p_)
-    plt.show()
+    u_diff = u_obj - u_empty
+
+    import matplotlib.pyplot as plt
+    
+    plt.colorbar(plot(u_empty)); plt.show()
+    plt.colorbar(plot(u_diff)); plt.show()
+
+    File("singular-poisson/solution_empty.pvd") << u_empty
+    File("singular-poisson/solution_diff.pvd") << project(u_diff, u_obj.function_space())
 
 
-test_singular_poisson()
+def main():
+    plane_size = (4, 10)
+    p_mag = mk_plane_source(plane_size)
+    # p_mag = [(Point(), 20)]
+
+    u_obj, u_empty = test_pert("box", 30, 2, 50, p_mag)
+    plot_and_save(u_obj, u_empty)
+
+
+main()
