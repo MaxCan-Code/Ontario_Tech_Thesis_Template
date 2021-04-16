@@ -186,7 +186,7 @@ def coeff(mesh, obj):
 
 def test_pert(obj_geom, n_cells, n_refns, R, points):
 
-    # source :math:`f` and boundary normal derivative :math:`g`	
+    # source :math:`f` and boundary normal derivative :math:`g`
     f = Constant(0)
     g = Constant(0)
 
@@ -196,18 +196,20 @@ def test_pert(obj_geom, n_cells, n_refns, R, points):
     """
     a, d = 2, 7
 
-    sphere_padded = gen_obj("box", a, d, boarder=2)
-    sphere_ = gen_obj("box", a, d, boarder=0)
+    sphere_padded = gen_obj(obj_geom, a, d, boarder=2)
+    sphere_ = gen_obj(obj_geom, a, d, boarder=0)
 
     plane_size = (4, 10)
-    refned_mesh = gen_refned_mesh(30, 2, 50, plane_size, sphere_padded)
+    refned_mesh = gen_refned_mesh(n_cells, n_refns, R, plane_size, sphere_padded)
 
     κ_obj = coeff(refned_mesh, sphere_)
 
     u_obj = singular_poisson(refned_mesh, 1, κ_obj, f, g, points)
 
     u_empty = singular_poisson(refned_mesh, 1, Constant(1), f, g, points)
-    
+
+    print("dofmap().global_dimension() = ", u_empty.function_space().dim())
+
     return u_obj, u_empty
 
 
@@ -225,36 +227,56 @@ def plot_and_save(u_obj, u_empty):
     File("singular-poisson/solution_diff.pvd") << project(u_diff, u_obj.function_space())
 
 
+def test_pert_2():
+    plane_size = (4, 10)
+    ps_plane = mk_plane_source(plane_size)
+
+    u_obj, u_empty = test_pert("box", 30, 2, 50, ps_plane)
+    plot_and_save(u_obj, u_empty)
+
+
+test_pert_2()
+
+
+# +
 def main():
-    # plane_size = (4, 10)
-    # ps_plane = mk_plane_source(plane_size)
-    # 
-    # u_obj, u_empty = test_pert("box", 30, 2, 50, ps_plane)
-    # plot_and_save(u_obj, u_empty)
 
     q = 20
     ps_pt = [(Point(), q)]
-    # u_empty_1ps_lst = [test_pert("box", 32, 2, i*10, ps_pt)[1] for i in range(2,6)]
-    u_empty_1ps_lst = [test_pert("box", 32, i, 50, ps_pt)[1] for i in range(5)]
-    # u_empty_1ps_lst = [test_pert("box", i, 2, 50, ps_pt)[1] for i in [16, 32, 64, 128, 256]]
+    # u_empty_1ps_lst = [test_pert("box", 32, 3, i, ps_pt)[1] for i in [120, 90, 60]]
+    # u_empty_1ps_lst = [test_pert("box", 32, i, 50, ps_pt)[1] for i in [4, 3, 2]]
+    rev_l = [8 * 2 ** i for i in range(4)[::-1]]
+    print("rev_l = ", rev_l)
+    u_empty_1ps_lst = [test_pert("box", i, 2, 50, ps_pt)[1] for i in rev_l]
 
-    u_e = Expression(
-        f"""
-        {q}/(4 * pi * sqrt(
-        pow(x[0], 2)+
-        pow(x[1], 2)+
-        pow(x[2], 2)))
-        """,
-        degree=2
-    )
-
-    pt_ = (0, 0, 7)
-    x0 = np.array(pt_)
-    for u_empty_ in u_empty_1ps_lst:
-        V = u_empty_.function_space()
-        dof_coords = V.tabulate_dof_coordinates()
-        dof = np.argmin(np.linalg.norm(dof_coords - x0, axis=1))
-        node_ = dof_coords[dof]
-        print(f"{u_empty_(node_) - u_e(node_)}   {u_empty_(pt_) - u_e(pt_)} {node_}") 
+    return u_empty_1ps_lst
 
 
+u_empty_1ps_lst = main()
+
+q = 20
+u_e = Expression(
+    f"""
+    {q}/(4 * pi * sqrt(
+    pow(x[0], 2)+
+    pow(x[1], 2)+
+    pow(x[2], 2)))
+    """,
+    degree=2
+)
+
+
+import numpy as np
+
+pt_ = (0, 0, 7)
+x0 = np.array(pt_)
+
+for u_empty_ in u_empty_1ps_lst:
+    V = u_empty_.function_space()
+    dof_coords = V.tabulate_dof_coordinates()
+    dof = np.argmin(np.linalg.norm(dof_coords - x0, axis=1))
+    node_ = dof_coords[dof]
+    print("dof = ", u_empty_.function_space().dim())
+#     print(f"vals = {u_empty_(pt_):.3e}, {u_e(pt_):.3e}")
+    print(f"{u_empty_(node_) - u_e(node_):.3e}, {u_empty_(pt_) - u_e(pt_):.3e}", node_)
+    print("\n")
