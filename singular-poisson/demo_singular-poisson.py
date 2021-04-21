@@ -34,8 +34,24 @@ def singular_poisson(mesh, degree, κ, f, g, points):
     # vector ``b``. We do this using the function :py:meth:`assemble
     # <dolfin.cpp.fem.Assembler.assemble>`: ::
 
+    q = 20
+    u_e = Expression(
+        f"""
+        {q}/(4 * pi * sqrt(
+        pow(x[0], 2)+
+        pow(x[1], 2)+
+        pow(x[2], 2)))
+        """,
+        degree=2,
+    )
+
     # Assemble system
-    A, b = assemble_system(a, L)
+    # u_D=Constant(0)
+    # u_D=u_e
+    # bc = DirichletBC(V, u_D, 'on_boundary')
+    # A, b = assemble_system(a, L, bc)
+#     A, b = assemble_system(a, L)
+
 
     # load and apply point source
     ps = PointSource(V, points)
@@ -151,7 +167,7 @@ def gen_obj(geom, a, d, boarder):
     elif geom == "box":
         obj_mask = (
             f"abs(x[0]) <= {a + boarder} and "
-            f"abs(x[1]) <= {a + boarder} and "
+            f"abs(x[1] - 2) <= {a + boarder} and "
             f"abs(x[2] - {d}) <= {a + boarder}"
         )
 
@@ -196,13 +212,13 @@ def test_pert(obj_geom, n_cells, n_refns, R, points):
     """
     a, d = 2, 7
 
-    sphere_padded = gen_obj(obj_geom, a, d, boarder=2)
-    sphere_ = gen_obj(obj_geom, a, d, boarder=0)
+    obj_padded = gen_obj(obj_geom, a, d, boarder=2)
+    obj_ = gen_obj(obj_geom, a, d, boarder=0)
 
     plane_size = (4, 10)
-    refned_mesh = gen_refned_mesh(n_cells, n_refns, R, plane_size, sphere_padded)
+    refned_mesh = gen_refned_mesh(n_cells, n_refns, R, plane_size, obj_padded)
 
-    κ_obj = coeff(refned_mesh, sphere_)
+    κ_obj = coeff(refned_mesh, obj_)
 
     u_obj = singular_poisson(refned_mesh, 1, κ_obj, f, g, points)
 
@@ -227,7 +243,7 @@ def plot_and_save(u_obj, u_empty):
     File("singular-poisson/solution_diff.pvd") << project(u_diff, u_obj.function_space())
 
 
-def test_pert_2():
+def test_pert_pl_sv():
     plane_size = (4, 10)
     ps_plane = mk_plane_source(plane_size)
 
@@ -235,48 +251,90 @@ def test_pert_2():
     plot_and_save(u_obj, u_empty)
 
 
-test_pert_2()
+# %time test_pert_pl_sv()
 
-
-# +
-def main():
-
-    q = 20
-    ps_pt = [(Point(), q)]
-    # u_empty_1ps_lst = [test_pert("box", 32, 3, i, ps_pt)[1] for i in [120, 90, 60]]
-    # u_empty_1ps_lst = [test_pert("box", 32, i, 50, ps_pt)[1] for i in [4, 3, 2]]
-    rev_l = [8 * 2 ** i for i in range(4)[::-1]]
-    print("rev_l = ", rev_l)
-    u_empty_1ps_lst = [test_pert("box", i, 2, 50, ps_pt)[1] for i in rev_l]
-
-    return u_empty_1ps_lst
-
-
-u_empty_1ps_lst = main()
-
-q = 20
-u_e = Expression(
-    f"""
-    {q}/(4 * pi * sqrt(
-    pow(x[0], 2)+
-    pow(x[1], 2)+
-    pow(x[2], 2)))
-    """,
-    degree=2
-)
-
-
+import pandas as pd
 import numpy as np
 
-pt_ = (0, 0, 7)
-x0 = np.array(pt_)
 
-for u_empty_ in u_empty_1ps_lst:
-    V = u_empty_.function_space()
+def tup_df(dict_, index_key, cols_key):
+    
+    cols_l = dict_[cols_key]
+    index_l = dict_[index_key]
+    
+    tup_table = [[(i, j) for i in cols_l] for j in index_l]
+    
+    index = pd.MultiIndex.from_product([[index_key], index_l], names=["", ""])
+    columns = pd.MultiIndex.from_product([[cols_key], cols_l], names=["", ""])
+    
+    return pd.DataFrame(tup_table, index=index, columns=columns)
+
+
+def val_map(x):
+    
+    print(x)
+    q = 20
+    u_e = Expression(
+        f"""
+        {q}/(4 * pi * sqrt(
+        pow(x[0], 2)+
+        pow(x[1], 2)+
+        pow(x[2], 2)))
+        """,
+        degree=2,
+    )
+
+    ps_pt = [(Point(), q)]
+
+    # u_obj, u_empty = test_pert("sphere", n_cells, 2, R, ps_pt)
+    u_obj, u_empty = test_pert("sphere", x[0], 2, x[1], ps_pt)
+#     u_obj, u_empty = test_pert("sphere", x[0], x[1], 75, ps_pt)
+
+    pt_ = (0, 0, 7)
+    x0 = np.array(pt_)
+
+    V = u_empty.function_space()
     dof_coords = V.tabulate_dof_coordinates()
     dof = np.argmin(np.linalg.norm(dof_coords - x0, axis=1))
     node_ = dof_coords[dof]
-    print("dof = ", u_empty_.function_space().dim())
-#     print(f"vals = {u_empty_(pt_):.3e}, {u_e(pt_):.3e}")
-    print(f"{u_empty_(node_) - u_e(node_):.3e}, {u_empty_(pt_) - u_e(pt_):.3e}", node_)
-    print("\n")
+
+    return u_empty(pt_) - u_e(pt_), u_empty
+    # show pert field at z=0 near body at 3 Rs
+    # return u_empty(pt_) - u_obj(pt_), u_empty
+
+# %time print(val_map((40, 1)))
+# %time print(val_map((80, 50)))
+
+initial_cells_lst = [(8 * 2 ** i) for i in range(1, 4)][::-1]
+# # +[80]
+R_lst = [i * 25 for i in range(2, 5)]
+refn_lst = range(3)
+
+params_d = {"initial cells": initial_cells_lst,
+            "R": R_lst,
+            "refinements": refn_lst}
+
+df = tup_df(params_d, "refinements",'R')
+# df = tup_df(params_d, "initial cells", "R")
+df
+
+
+def ts_pl(x):
+    print(x)
+    return f"{x[1]}+{x[0]*2}, 4"
+
+# df.applymap(ts_pl)
+# ts_pl(df)
+
+# %time df_mp=df.applymap(val_map) # neu 10 min; dirl 9min 30
+
+df_fstr=df_mp.applymap(lambda x : f"{x[0]:.3e}")
+df_fstr
+# -
+
+# df_mp.applymap(lambda x : x[1].functionspace().dim())
+df_fstr.iloc[:, ::-1]
+
+df_sv=df_fstr
+df_sv.to_csv('out.csv')
+
