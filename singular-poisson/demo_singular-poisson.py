@@ -50,7 +50,7 @@ def singular_poisson(mesh, degree, κ, f, g, points):
     # u_D=u_e
     # bc = DirichletBC(V, u_D, 'on_boundary')
     # A, b = assemble_system(a, L, bc)
-#     A, b = assemble_system(a, L)
+    # A, b = assemble_system(a, L)
 
 
     # load and apply point source
@@ -271,8 +271,6 @@ def tup_df(dict_, index_key, cols_key):
 
 
 def val_map(x):
-    
-    print(x)
     q = 20
     u_e = Expression(
         f"""
@@ -286,55 +284,48 @@ def val_map(x):
 
     ps_pt = [(Point(), q)]
 
-    # u_obj, u_empty = test_pert("sphere", n_cells, 2, R, ps_pt)
-    u_obj, u_empty = test_pert("sphere", x[0], 2, x[1], ps_pt)
-#     u_obj, u_empty = test_pert("sphere", x[0], x[1], 75, ps_pt)
+    R_, n_cells_ = x
+    print("R_, n_cells_ =", x)
+    u_obj, u_empty = test_pert("sphere", n_cells_, 2, R_, ps_pt)
+
+    # n_refns_, n_cells_ = x
+    # print("n_refns_, n_cells_ =", x)
+    # u_obj, u_empty = test_pert("sphere", n_cells_, n_refns_, 75, ps_pt)
 
     pt_ = (0, 0, 7)
-    x0 = np.array(pt_)
-
-    V = u_empty.function_space()
-    dof_coords = V.tabulate_dof_coordinates()
-    dof = np.argmin(np.linalg.norm(dof_coords - x0, axis=1))
-    node_ = dof_coords[dof]
 
     return u_empty(pt_) - u_e(pt_), u_empty
     # show pert field at z=0 near body at 3 Rs
-    # return u_empty(pt_) - u_obj(pt_), u_empty
+    # pt_z0 = (2, 0, 0)
+    # return u_empty(pt_z0) - u_obj(pt_z0), u_emty
 
-# %time print(val_map((40, 1)))
-# %time print(val_map((80, 50)))
 
-initial_cells_lst = [(8 * 2 ** i) for i in range(1, 4)][::-1]
-# # +[80]
+# # %time print(val_map((1, 40)))
+# %time print(val_map((50, 30)))
+
+initial_cells_lst = [(8 * 2 ** i) for i in range(1, 4)]# + [80]
 R_lst = [i * 25 for i in range(2, 5)]
-refn_lst = range(3)
+refn_lst = range(4)
 
 params_d = {"initial cells": initial_cells_lst,
             "R": R_lst,
             "refinements": refn_lst}
 
-df = tup_df(params_d, "refinements",'R')
-# df = tup_df(params_d, "initial cells", "R")
+# df = tup_df(params_d, "initial cells", "refinements").iloc[::-1, ::-1]
+df = tup_df(params_d, "initial cells", "R").iloc[::-1]
 df
-
-
-def ts_pl(x):
-    print(x)
-    return f"{x[1]}+{x[0]*2}, 4"
-
-# df.applymap(ts_pl)
-# ts_pl(df)
 
 # %time df_mp=df.applymap(val_map) # neu 10 min; dirl 9min 30
 
-df_fstr=df_mp.applymap(lambda x : f"{x[0]:.3e}")
+df_fstr=df_mp.applymap(lambda x : f"{x[0]:.3e}").iloc[::-1]
 df_fstr
-# -
 
 # df_mp.applymap(lambda x : x[1].functionspace().dim())
-df_fstr.iloc[:, ::-1]
 
 df_sv=df_fstr
 df_sv.to_csv('out.csv')
+# df_sv.to_csv('N-refn2.csv')
+# df_sv.to_csv('N-R75.csv')
+# df_sv.to_csv('D-refn2.csv')
+# df_sv.to_csv('D-R75.csv')
 
