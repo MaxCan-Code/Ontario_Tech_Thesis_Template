@@ -1,28 +1,29 @@
-\documentclass[oneside]{Ontario_Tech_Thesis}
+#+options: toc:nil title:nil
+#+latex_class: Ontario_Tech_Thesis
+#+latex_class_options: [oneside]
+#+latex_header: \usepackage{lipsum} % Only for the sample
+#+latex_header:
+#+latex_header: % Thesis properties
+#+title: Your Thesis Title
+#+date: \today
+#+author: Your Name
+#+latex_header: \degree{Your Degree}
+#+latex_header: \faculty{Your Faculty}
+#+latex_header: \program{Your Program}
+#+latex_header: % By default the university is UOIT, this can be changed by uncommenting the following
+#+latex_header: %\university{Your University}
+#+latex_header: %\city{Your city and country}
+#+latex_header:
+#+latex_header: % Defense properties
+#+latex_header: \defense{July 1, 2019}
+#+latex_header: \chair{Thesis Chair}
+#+latex_header: \supervisor{Your Supervisor}
+#+latex_header: \committee{Committee Member 1}{Committee Member 2}
+#+latex_header: \examiner{External Examiner, Their Affiliation} % Thesis / External Examiner
+#+latex_header: %\univexaminer{} % University Examiner (PhD Only)
 
-\usepackage{lipsum} % Only for the sample
-
-% Thesis properties
-\title{Your Thesis Title}
-\date{\today}
-\author{Your Name}
-\degree{Your Degree}
-\faculty{Your Faculty}
-\program{Your Program}
-% By default the university is UOIT, this can be changed by uncommenting the following 
-%\university{Your University}
-%\city{Your city and country}
-
-% Defense properties
-\defense{July 1, 2019}
-\chair{Thesis Chair}
-\supervisor{Your Supervisor}
-\committee{Committee Member 1}{Committee Member 2}
-\examiner{External Examiner, Their Affiliation} % Thesis / External Examiner
-%\univexaminer{} % University Examiner (PhD Only)
-
-\begin{document}
-\pagenumbering{roman} 
+#+begin_export latex
+\pagenumbering{roman}
 \maketitle
 
 \makeexaminfo
@@ -47,31 +48,52 @@ The work described in Chapter \ref{chap:chap2} was performed at the Futuristic A
 
 \pagenumbering{arabic}
 \doublespacing
+#+end_export
 
-\chapter{First Chapter Title}
+* First Chapter Title
 \lipsum[1-2]
-\section{First Section}
+** First Section
 \lipsum[3-4]
 
-\chapter{Second Chapter Title}
-\label{chap:chap2}
+* Second Chapter Title
+:PROPERTIES:
+:CUSTOM_ID: chap:chap2
+:END:
 \lipsum[5-6]
-\begin{figure}[tbp]
-\includegraphics{Plot}
-\caption{Beautiful plot of $y = \sin(\pi x)$.}
-\end{figure}
+#+caption: Beautiful plot of \(y = \sin(\pi x)\).
+[[./Plot.pdf]]
 \lipsum[7-8]
 
+#+begin_export latex
 % Adds references to table of contents
-\phantomsection 
-\addcontentsline{toc}{chapter}{References} 
+\phantomsection
+\addcontentsline{toc}{chapter}{References}
 
 \nocite{*} % Only for the sample
 \bibliography{Ref}
+#+end_export
 
 \appendix
 
-\chapter{Sample Appendix}
+* Sample Appendix
 \lipsum[9-12]
 
-\end{document}
+* New ~org-latex-class~                                            :noexport:
+  #+name: new-class
+  #+begin_src emacs-lisp
+    (with-eval-after-load 'ox-latex
+      (add-to-list 'org-latex-classes
+		   '("Ontario_Tech_Thesis"
+		     "\\documentclass{Ontario_Tech_Thesis}"
+		     ("\\chapter{%s}" . "\\chapter*{%s}")
+		     ("\\section{%s}" . "\\section*{%s}")
+		     ("\\subsection{%s}" . "\\subsection*{%s}")
+		     ("\\subsubsection{%s}" . "\\subsubsection*{%s}"))))
+    ;; Local Variables:
+    ;; eval: (org-sbe new-class)
+    ;; org-latex-prefer-user-labels: t
+    ;; org-latex-default-packages-alist: nil
+    ;; org-latex-hyperref-template: nil
+    ;; org-latex-pdf-process: ("nextonic compile %f")
+    ;; End:
+  #+end_src
