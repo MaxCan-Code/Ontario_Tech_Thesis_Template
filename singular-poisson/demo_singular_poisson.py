@@ -152,7 +152,7 @@ def mk_plane_source(size):
     q_all = (-q_tail,) * side + (q,) * (n_src - side)
 
     points = [(Point(loc), q_) for loc, q_ in zip(mesh_coords, q_all)]
-    
+
     return points
 
 
@@ -235,7 +235,7 @@ def plot_and_save(u_obj, u_empty):
     u_diff = u_obj - u_empty
 
     import matplotlib.pyplot as plt
-    
+
     plt.colorbar(plot(u_empty)); plt.show()
     plt.colorbar(plot(u_diff)); plt.show()
 
@@ -258,15 +258,15 @@ import numpy as np
 
 
 def tup_df(dict_, index_key, cols_key):
-    
+
     cols_l = dict_[cols_key]
     index_l = dict_[index_key]
-    
+
     tup_table = [[(i, j) for i in cols_l] for j in index_l]
-    
+
     index = pd.MultiIndex.from_product([[index_key], index_l], names=["", ""])
     columns = pd.MultiIndex.from_product([[cols_key], cols_l], names=["", ""])
-    
+
     return pd.DataFrame(tup_table, index=index, columns=columns)
 
 
@@ -303,15 +303,7 @@ def val_map(x):
 # # %time print(val_map((1, 40)))
 # %time print(val_map((50, 30)))
 
-def sv_conv_table():
-    initial_cells_lst = [(8 * 2 ** i) for i in range(4, 5)]# + [80]
-    R_lst = [i * 25 for i in range(2, 5)]
-    refn_lst = range(4, 5)
-
-    params_d = {"initial cells": initial_cells_lst,
-                "R": R_lst,
-                "refinements": refn_lst}
-
+def sv_conv_table(params_d):
     df = tup_df(params_d, "initial cells", "refinements").iloc[::-1, ::-1]
     # df = tup_df(params_d, "initial cells", "R").iloc[::-1]
 

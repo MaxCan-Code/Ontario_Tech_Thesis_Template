@@ -1,0 +1,53 @@
+# This is a basic workflow to help you get started with Actions
+
+name: Apptainer MPI CI
+
+# Controls when the action will run.
+on:
+  # Triggers the workflow on push or pull request events in every branch
+  # pull_request:
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "apptainer-mpi"
+  apptainer-mpi:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@HEAD
+
+      - name: Cache Apptainer
+        uses: actions/cache@HEAD
+        env:
+          # Increase this value to reset cache if etc/example-environment.yml has not changed
+          CACHE_NUMBER: 0
+        with:
+          path: ~/apptainer-dir
+          key: ${{ hashFiles('singular-poisson/FEniCS-pandas.def') }}
+
+      - name: Install Apptainer
+        run: |
+          sudo apt-get -yqm update
+          curl -LO https://github.com/apptainer/apptainer/releases/download/v1.0.0/apptainer_1.0.0_amd64.deb
+          sudo dpkg -i apptainer_1.0.0_amd64.deb
+          apt-get -yqf install mpich libmpich-dev
+
+      - name: Build Container
+        run: |
+          command time -v apptainer build -f -F --fix-perms FEniCS-pandas.{sif,def}
+
+      # Runs a set of commands using the runners shell
+      - name: mpirun
+        run: |
+          command time -v mpirun -profile ./FEniCS-pandas.sif python3 singular-poisson/run_demo.py
+
+      - uses: actions/upload-artifact@HEAD
+        with:
+          name: out-csv
+          path: out.csv

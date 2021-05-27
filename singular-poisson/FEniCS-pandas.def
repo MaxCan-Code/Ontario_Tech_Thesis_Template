@@ -1,6 +1,10 @@
 Bootstrap: docker
-From: quay.io/fenicsproject/stable
+From: quay.io/fenicsproject/dev
 
 %post
-  pip install -Uq pandas
-  sed -ir "282 s/^/#/" /usr/local/lib/python3.6/dist-packages/dolfin/common/plotting.py
+    python3 -m pip install -Uq pandas
+    # https://bitbucket.org/fenics-project/docker/src/master/dockerfiles
+    ldconfig
+
+%runscript
+    exec "$@"

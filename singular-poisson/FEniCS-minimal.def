@@ -1,0 +1,20 @@
+Bootstrap: docker
+From: quay.io/fenicsproject/stable
+
+%runscript
+    exec "$@"
+
+%help
+    To build:
+      `apptainer build -f --fix-perms FEniCS-minimal.{sif,def}`
+
+    Running
+    ```sh
+      apptainer pull docker://quay.io/fenicsproject/stable
+      ./stable_latest.sif
+    ```
+    crashed my system and
+    `apptainer inspect --runscript stable_latest.sif`
+    gives a mess, overwriting the runscript with `exec "$@"` fixes this
+
+    Source of this file: https://github.com/MaxCan-Code/thesis/blob/main/singular-poisson/FEniCS-minimal.def

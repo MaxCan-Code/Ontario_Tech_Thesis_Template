@@ -1,0 +1,78 @@
+* Parameters
+Change the following variables in [[./run_demo.py]] to adjust your meshes,
+each is a list containing the following elements:
+- ~initial_cells_lst~ :: number of initial cells in the mesh
+- ~R_lst~ :: radius of the mesh (not used)
+- ~refn_lst~ :: number of refinements made to the mesh
+
+* Running with Apptainer
+** Installing Apptainer
+The installation section on
+https://apptainer.org/docs/admin/1.0/installation.html
+wasn't very helpful.
+Install with the package manager on your system
+
+** Building the Container
+The Apptainer webinar on
+https://helpwiki.sharcnet.ca/wiki/Online_Seminars
+recommends building containers on local hard drive[fn::
+Page 13 of
+https://helpwiki.sharcnet.ca/wiki/images/e/eb/Apptainer.pdf]
+
+To build the container[fn:1]:
+#+begin_src sh
+  apptainer build -f --fix-perms FEniCS-pandas.{sif,def}
+#+end_src
+If the ~-f~ flag gives you a permission denied error,
+try building with ~sudo~.
+See the error message from ~apptainer build~ for more info
+
+[fn:1] After building the container,
+you can get the above command by running
+~apptainer run-help FEniCS-pandas.sif~
+
+** Running Locally
+After saving your changes in [[./run_demo.py]],
+run and get the resource usage with:
+#+begin_src sh
+  command time -v apptainer run -C -B ~ FEniCS-pandas.sif \
+	  python3 $(pwd)/run_demo.py
+  less ~/out.csv
+#+end_src
+The result will be written to =~/out.csv=
+
+* Running on Cluster
+** Transfer the Container to Cluster
+I recommend ~rsync~:
+#+begin_src sh
+  rsync -rltuP \
+	FEniCS-pandas.sif \
+	mpich_job.sh \
+	run_demo.py \
+	demo_singular_poisson.py \
+	someuser@gra-dtn1.computecanada.ca:projects/def-professor/FEniCS-job
+#+end_src
+See https://docs.alliancecan.ca/wiki/Transferring_data#Rsync for more
+(The ~?~ icon beside the commands links to useful explanations)
+
+** Submit Job
+After saving your changes in [[./run_demo.py]],
+submit the Slurm job with
+~sbatch mpich_job.sh~[fn::
+See
+https://docs.alliancecan.ca/wiki/Running_jobs
+for more on Slurm jobs]
+
+Use ~seff <jobid>~ to see the efficiency of a job like on
+https://docs.alliancecan.ca/wiki/Running_jobs#Completed_jobs
+
+* COMMENT comment
+https://stackoverflow.com/a/13356654
+{ time mpirun -n 4 -profile apptainer run -B $(pwd) \
+   -H $(pwd)/newhome \
+   sif/FEniCS-pandas.sif \
+   bash -c \
+    'python3 -m mpi4py.bench helloworld && \
+     set +o pipefail && \
+     python3 run_demo.py' ; } &> log/mpi-no-C.txt
+   < newhome/out.csv >> log/mpi-no-C.txt

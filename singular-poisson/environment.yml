@@ -1,0 +1,6 @@
+dependencies:
+  - fenics
+  - mshr
+  - pandas
+  - hy
+  - matplotlib
