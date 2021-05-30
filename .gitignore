@@ -8,4 +8,6 @@
 *.gz
 *.toc
 
-singular-poisson/
+singular-poisson/.cache/dijitso
+singular-poisson/*.sif
+singular-poisson/.singularity/cache/blob/blobs/sha256

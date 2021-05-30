@@ -1,0 +1,9 @@
+services:
+  singularity:
+    image: quay.io/singularity/singularity:v3.7.3-slim 
+    stdin_open: true
+    tty: true
+    privileged: true
+    volumes:
+      - .:/root
+    entrypoint: ["/bin/sh"]

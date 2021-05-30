@@ -1,0 +1,6 @@
+Bootstrap: docker
+From: quay.io/fenicsproject/stable
+
+%post
+  pip install -Uq pandas
+  sed -ir "282 s/^/#/" /usr/local/lib/python3.6/dist-packages/dolfin/common/plotting.py

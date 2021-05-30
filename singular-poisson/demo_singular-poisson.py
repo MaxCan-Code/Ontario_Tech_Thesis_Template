@@ -50,7 +50,7 @@ def singular_poisson(mesh, degree, κ, f, g, points):
     # u_D=u_e
     # bc = DirichletBC(V, u_D, 'on_boundary')
     # A, b = assemble_system(a, L, bc)
-    # A, b = assemble_system(a, L)
+    A, b = assemble_system(a, L)
 
 
     # load and apply point source
@@ -284,13 +284,13 @@ def val_map(x):
 
     ps_pt = [(Point(), q)]
 
-    R_, n_cells_ = x
-    print("R_, n_cells_ =", x)
-    u_obj, u_empty = test_pert("sphere", n_cells_, 2, R_, ps_pt)
+    # R_, n_cells_ = x
+    # print("R_, n_cells_ =", x)
+    # u_obj, u_empty = test_pert("sphere", n_cells_, 2, R_, ps_pt)
 
-    # n_refns_, n_cells_ = x
-    # print("n_refns_, n_cells_ =", x)
-    # u_obj, u_empty = test_pert("sphere", n_cells_, n_refns_, 75, ps_pt)
+    n_refns_, n_cells_ = x
+    print("n_refns_, n_cells_ =", x)
+    u_obj, u_empty = test_pert("sphere", n_cells_, n_refns_, 75, ps_pt)
 
     pt_ = (0, 0, 7)
 
@@ -303,29 +303,21 @@ def val_map(x):
 # # %time print(val_map((1, 40)))
 # %time print(val_map((50, 30)))
 
-initial_cells_lst = [(8 * 2 ** i) for i in range(1, 4)]# + [80]
-R_lst = [i * 25 for i in range(2, 5)]
-refn_lst = range(4)
+def sv_conv_table():
+    initial_cells_lst = [(8 * 2 ** i) for i in range(4, 5)]# + [80]
+    R_lst = [i * 25 for i in range(2, 5)]
+    refn_lst = range(4, 5)
 
-params_d = {"initial cells": initial_cells_lst,
-            "R": R_lst,
-            "refinements": refn_lst}
+    params_d = {"initial cells": initial_cells_lst,
+                "R": R_lst,
+                "refinements": refn_lst}
 
-# df = tup_df(params_d, "initial cells", "refinements").iloc[::-1, ::-1]
-df = tup_df(params_d, "initial cells", "R").iloc[::-1]
-df
+    df = tup_df(params_d, "initial cells", "refinements").iloc[::-1, ::-1]
+    # df = tup_df(params_d, "initial cells", "R").iloc[::-1]
 
-# %time df_mp=df.applymap(val_map) # neu 10 min; dirl 9min 30
+    df_mp=df.applymap(val_map) # neu 10 min; dirl 9min 30
 
-df_fstr=df_mp.applymap(lambda x : f"{x[0]:.3e}").iloc[::-1]
-df_fstr
-
-# df_mp.applymap(lambda x : x[1].functionspace().dim())
-
-df_sv=df_fstr
-df_sv.to_csv('out.csv')
-# df_sv.to_csv('N-refn2.csv')
-# df_sv.to_csv('N-R75.csv')
-# df_sv.to_csv('D-refn2.csv')
-# df_sv.to_csv('D-R75.csv')
-
+    df_fstr=df_mp.applymap(lambda x : f"{x[0]:.3e}").iloc[::-1]
+    # df_mp.applymap(lambda x : x[1].functionspace().dim())
+    df_sv=df_fstr
+    df_sv.to_csv('out.csv')
