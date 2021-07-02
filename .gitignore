@@ -7,3 +7,5 @@
 *.out
 *.gz
 *.toc
+
+singular-poisson/
