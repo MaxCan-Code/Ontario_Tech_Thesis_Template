@@ -2,17 +2,7 @@
 * [[https://github.com/MaxCan-Code/fenics-tutorial/wiki/prez][My presentation]]
 Research stuff I starred, might as well put them here
 + [[https://github.com/JuliaPDE/SurveyofPDEPackages][JuliaPDE/SurveyofPDEPackages]]
-+ [[https://github.com/alirezasamar/awesome-phd][alirezasamar/awesome-phd]]
-+ [[https://github.com/fniessen/refcard-org-beamer][fniessen/refcard-org-beamer]]
-+ [[https://github.com/writing-resources/awesome-scientific-writing][writing-resources/awesome-scientific-writing]]
-+ [[https://github.com/betterscientificsoftware/bssw.io][betterscientificsoftware/bssw.io]]
 + [[https://github.com/kausalflow/tools][kausalflow/tools]]
-+ [[https://github.com/dspinellis/latex-advice][dspinellis/latex-advice]]
-+ [[https://github.com/macoj/phd][macoj/phd]]
-+ [[https://github.com/egeerardyn/awesome-LaTeX][egeerardyn/awesome-LaTeX]]
-+ [[https://github.com/emptymalei/awesome-research][emptymalei/awesome-research]]
-+ [[https://github.com/m2n037/awesome-mecheng][m2n037/awesome-mecheng]]
-+ [[https://github.com/nschloe/awesome-scientific-computing][nschloe/awesome-scientific-computing]]
 
 * Ontario Tech Thesis Template
 This is the thesis template I modified from [[http://faculty.uoit.ca/macmillan/thesis_template.zip][Joe's undergradutate template]].
